@@ -1,0 +1,70 @@
+name: Manual Climate Control
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action à effectuer'
+        required: true
+        default: 'start_ac'
+        type: choice
+        options:
+        - start_ac
+        - stop_ac
+        - start_defrost
+        - start_heated_seats
+        - rear_window_heat_on
+        - rear_window_heat_off
+      temperature:
+        description: 'Température (1-15, pour climatisation uniquement)'
+        required: false
+        default: '8'
+        type: string
+      heated_seats_left:
+        description: 'Niveau siège gauche (0-3, pour sièges chauffants)'
+        required: false
+        default: '0'
+        type: string
+      heated_seats_right:
+        description: 'Niveau siège droit (0-3, pour sièges chauffants)'
+        required: false
+        default: '0'
+        type: string
+
+jobs:
+  climate-control:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+    
+    - name: Run manual climate control
+      env:
+        MG_USERNAME: ${{ secrets.MG_USERNAME }}
+        MG_PASSWORD: ${{ secrets.MG_PASSWORD }}
+        ACTION: ${{ github.event.inputs.action }}
+        TEMPERATURE: ${{ github.event.inputs.temperature }}
+        HEATED_SEATS_LEFT: ${{ github.event.inputs.heated_seats_left }}
+        HEATED_SEATS_RIGHT: ${{ github.event.inputs.heated_seats_right }}
+      run: |
+        python manual_climate_control.py
+    
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: manual-climate-logs-${{ github.run_number }}
+        path: |
+          manual_climate.log
