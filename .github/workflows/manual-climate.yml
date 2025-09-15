@@ -18,7 +18,7 @@ on:
       temperature:
         description: 'Température (1-15, pour climatisation uniquement)'
         required: false
-        default: '8'
+        default: '1'
         type: string
       heated_seats_left:
         description: 'Niveau siège gauche (0-3, pour sièges chauffants)'
