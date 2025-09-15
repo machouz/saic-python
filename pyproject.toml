@@ -19,7 +19,8 @@ dependencies = [
     "pycryptodome (>=3.20.0,<4.0.0)",
     "httpx (>=0.27.0,<0.29.0)",
     "tenacity (>=9.0.0,<10.0.0)",
-    "dacite (>=1.8.1,<2.0.0)"
+    "dacite (>=1.8.1,<2.0.0)",
+    "pytz (>=2025.2,<2026.0)"
 ]
 
 [project.urls]

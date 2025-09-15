@@ -1,0 +1,42 @@
+name: Climate Scheduler
+
+on:
+  schedule:
+    # Exécute tous les jours à 12:20 UTC (15:20 heure israélienne)
+    - cron: '20 12 * * *'
+  workflow_dispatch: # Permet l'exécution manuelle
+
+jobs:
+  climate-control:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run climate scheduler
+      env:
+        MG_USERNAME: ${{ secrets.MG_USERNAME }}
+        MG_PASSWORD: ${{ secrets.MG_PASSWORD }}
+      run: |
+        python climate_scheduler.py
+    
+    - name: Upload logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: climate-logs
+        path: |
+          climate_scheduler.log
+          executed_*.flag
+          schedule_start_date.txt

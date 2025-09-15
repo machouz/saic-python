@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  climate-scheduler:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - MG_USERNAME=${MG_USERNAME}
+      - MG_PASSWORD=${MG_PASSWORD}
+      - TZ=Asia/Jerusalem
+    volumes:
+      - climate_data:/app/data
+    restart: unless-stopped
+    container_name: mg-climate-scheduler
+
+volumes:
+  climate_data:
